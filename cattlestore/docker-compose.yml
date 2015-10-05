@@ -1,0 +1,5 @@
+cs:
+  # image: cattlestore
+  build: .
+  ports:
+  - 8080
