@@ -5,3 +5,6 @@ build-app:
 
 build-container:
 	@docker build -t containersolutions/cattlestore .
+
+run:
+	@go run main.go
