@@ -2,3 +2,5 @@
 target/
 *.iml
 
+# Ignore web app's dist files.
+/cattlestore/dist/
