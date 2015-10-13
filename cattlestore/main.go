@@ -36,9 +36,9 @@ func main() {
 	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
 		var msg string
 		if healthy {
-			msg = "yay" // passing
+			msg = "0" // passing
 		} else {
-			msg = "nay" // failing
+			msg = "2" // failing
 			http.Error(w, "oops", 500)
 		}
 		fmt.Fprintf(w, msg)
