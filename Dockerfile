@@ -2,6 +2,6 @@ FROM scratch
 
 EXPOSE 8080
 
-COPY dist/cattlestore /
+COPY cattlestore /
 
 ENTRYPOINT ["/cattlestore"]

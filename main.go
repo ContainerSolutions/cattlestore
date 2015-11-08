@@ -1,4 +1,4 @@
-package main // import "github.com/ContainerSolutions/cattlestore"
+package main // import "github.com/containersol/cattlestore"
 
 import (
 	"flag"
