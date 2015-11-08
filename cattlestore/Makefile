@@ -1,6 +1,7 @@
 all: build-app build-container
 
 build-app:
+	@go fmt *.go
 	@go build -o dist/cattlestore main.go
 
 build-container:

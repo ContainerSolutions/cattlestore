@@ -2,10 +2,6 @@ FROM scratch
 
 EXPOSE 8080
 
-ENV SERVICE_8080_CHECK_INTERVAL 1s
-ENV SERVICE_8080_CHECK_HTTP /health
-ENV SERVICE_8080_NAME cattlestore
-
-COPY cattlestore /
+COPY dist/cattlestore /
 
 ENTRYPOINT ["/cattlestore"]

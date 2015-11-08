@@ -16,7 +16,7 @@ var (
 
 func init() {
 	flag.IntVar(&delayRead, "delay", 10, "the amount of seconds the web server will take to finish serving a request")
-	flag.StringVar(&bind, "bind", ":8080", "ip:port pair where the web server will listen on")
+	flag.StringVar(&bind, "bind", ":8080", "ip:port pair the web server will listen on")
 	delay = time.Duration(delayRead) * time.Second
 }
 
@@ -31,17 +31,6 @@ func main() {
 		time.Sleep(delay)
 		healthy = true
 		fmt.Fprintf(w, "tock")
-	})
-
-	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
-		var msg string
-		if healthy {
-			msg = "0" // passing
-		} else {
-			msg = "2" // failing
-			http.Error(w, "oops", 500)
-		}
-		fmt.Fprintf(w, msg)
 	})
 
 	log.Printf("Ready to listen on %s", bind)
