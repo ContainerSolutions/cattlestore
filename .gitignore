@@ -4,5 +4,4 @@ target/
 
 # Ignore web app's dist files.
 dist/
-cattlestore
 

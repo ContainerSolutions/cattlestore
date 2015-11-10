@@ -1,5 +1,11 @@
 # Cattle store
 
+If on OSX, (re)install go using:
+```
+brew reinstall go --with-cc-common
+```
+This will enable cross compilation.
+
 The idea behind this application is that we're going to spin a wheel with a sensor attached to it. The sensor will relay clicks (most basic form of data) to a REST endpoint.
 
 The REST API will be faced with a facade for counting purposes. The facade is transparent and relays the REST calls through to a back end consisting of several "cattlestore." The cattlestore app is deliberately slow because it sleeps for a couple of seconds before returning each REST call. When asleep, it reports its health as `critical` to Consul.
