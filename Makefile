@@ -1,4 +1,4 @@
-docker-container = containersolutions/cattlestore
+docker-container = containersol/cattlestore
 dist = dist/cattlestore
 
 all: build-container

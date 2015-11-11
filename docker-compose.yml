@@ -1,5 +1,8 @@
-cs:
-  # image: cattlestore
-  build: .
+traefik:
+  image: emilevauge/traefik
   ports:
-  - 8080
+  - 80:80
+  - 8888:8080
+  volumes:
+  - ./traefik.toml:/traefik.toml
+  - /var/run/docker.sock:/tmp/docker.sock
