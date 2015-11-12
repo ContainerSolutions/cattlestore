@@ -35,12 +35,9 @@ func marshal(w http.ResponseWriter, o uint64, m int) {
 }
 
 func main() {
-	var max int = 10
-	add := rand.New(rand.NewSource(time.Now().UnixNano())).Intn(20)
-	max += add
-	log.Printf("added: %d, for max %d", add, max)
-
 	flag.Parse()
+
+	var max int = 10 + rand.New(rand.NewSource(time.Now().UnixNano())).Intn(20)
 
 	http.HandleFunc("/tick", func(w http.ResponseWriter, r *http.Request) {
 		tmpOps := atomic.LoadUint64(&ops)
