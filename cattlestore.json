@@ -2,7 +2,7 @@
   "id": "cattlestore",
   "cpus": 0.1,
   "mem": 16.0,
-  "instances": 10,
+  "instances": 1,
   "container": {
     "type": "DOCKER",
     "docker": {
