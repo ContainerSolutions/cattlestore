@@ -18,8 +18,8 @@ var (
 )
 
 type Message struct {
-	Ops uint64
-	Max int
+	Ops uint64 `json:"ops"`
+	Max int    `json:"max"`
 }
 
 func init() {
