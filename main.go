@@ -6,11 +6,11 @@ import (
 	"fmt"
 	"github.com/braintree/manners"
 	"log"
+	"math/rand"
 	"net/http"
 	"sync/atomic"
+	"time"
 )
-
-const max uint64 = 10
 
 var (
 	bind string
@@ -19,14 +19,14 @@ var (
 
 type Message struct {
 	Ops uint64
-	Max uint64
+	Max int
 }
 
 func init() {
 	flag.StringVar(&bind, "bind", ":8080", "ip:port pair the web server will listen on")
 }
 
-func marshal(w http.ResponseWriter, o uint64, m uint64) {
+func marshal(w http.ResponseWriter, o uint64, m int) {
 	if b, err := json.Marshal(Message{o, m}); err != nil {
 		http.Error(w, "Couldn't marshal message", 500)
 	} else {
@@ -35,6 +35,11 @@ func marshal(w http.ResponseWriter, o uint64, m uint64) {
 }
 
 func main() {
+	var max int = 10
+	add := rand.New(rand.NewSource(time.Now().UnixNano())).Intn(20)
+	max += add
+	log.Printf("added: %d, for max %d", add, max)
+
 	flag.Parse()
 
 	http.HandleFunc("/tick", func(w http.ResponseWriter, r *http.Request) {
@@ -44,7 +49,7 @@ func main() {
 
 		log.Print(fmt.Sprintf("tock (%d/%d)", tmpOps+1, max))
 
-		if tmpOps >= max {
+		if tmpOps >= uint64(max) {
 			manners.Close()
 		}
 
