@@ -1,6 +1,6 @@
 {
   "id": "cattlestore",
-  "cpus": 0.1,
+  "cpus": 0.02,
   "mem": 16.0,
   "instances": 1,
   "container": {
