@@ -6,3 +6,9 @@ traefik:
   volumes:
   - ./traefik.toml:/traefik.toml
   - /var/run/docker.sock:/tmp/docker.sock
+
+herder:
+  image: containersol/herder
+  ports:
+  - 8077:8080
+
