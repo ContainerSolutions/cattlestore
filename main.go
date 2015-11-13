@@ -34,10 +34,28 @@ func marshal(w http.ResponseWriter, o uint64, m int) {
 	}
 }
 
+func cant_take_it_anymore(max int) {
+	pingTicker := time.NewTicker(1 * time.Second)
+	defer func() {
+		pingTicker.Stop()
+	}()
+
+	for {
+		select {
+		case <-pingTicker.C:
+			if atomic.LoadUint64(&ops) >= uint64(max) {
+				manners.Close()
+			}
+		}
+	}
+}
+
 func main() {
 	flag.Parse()
 
 	var max int = 10 + rand.New(rand.NewSource(time.Now().UnixNano())).Intn(21)
+
+	go cant_take_it_anymore(max)
 
 	http.HandleFunc("/tick", func(w http.ResponseWriter, r *http.Request) {
 		tmpOps := atomic.LoadUint64(&ops)
@@ -45,10 +63,6 @@ func main() {
 		marshal(w, tmpOps, max)
 
 		log.Print(fmt.Sprintf("tock (%d/%d)", tmpOps+1, max))
-
-		if tmpOps >= uint64(max) {
-			manners.Close()
-		}
 
 		atomic.AddUint64(&ops, 1)
 	})
