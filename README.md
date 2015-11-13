@@ -1,41 +1,46 @@
 # Cattle store
 
-If on OSX, (re)install go using:
-```
-brew reinstall go --with-cc-common
-```
-This will enable cross compilation.
-
 The idea behind this application is that we're going to spin a wheel with a sensor attached to it. The sensor will relay clicks (most basic form of data) to a REST endpoint.
 
-The REST API will be faced with a facade for counting purposes. The facade is transparent and relays the REST calls through to a back end consisting of several "cattlestore." The cattlestore app is deliberately slow because it sleeps for a couple of seconds before returning each REST call. When asleep, it reports its health as `critical` to Consul.
+The REST API will be faced with a facade for counting purposes. The facade is transparent and relays the REST calls through to a back end consisting of several "cattlestore." The cattlestore app is doomed because after a specific number of requests it can't take it anymore and exits.
 
-There needs to be a herder or orchestrator that watches Consul, counts the number of healthy cattlestore apps, and spins up more when there are too few of them. This will be done through Marathon, which is part of Mantl.
+There is a [herder](https://github.com/ContainerSolutions/cattlestore-herder) that finds the running instances in Marathon, gets the number of requests served so far and pushes this information out through a websocket. Marathon and Mesos are part of [Mantl](http://mantl.io).
 
 This app will consist of 5 parts, running on [Mantl.io](http://Mantl.io/).
 
 The parts are
-- A facade (see the ms-facade subdir), currently a Dropwizard Java app,
-- The cattle store app (cattlestore subdir), this is the thing that will be scaled up and down, currently a golang app,
-- The "herder," which will do the scaling,
-- A front end application that gets its information from Consul (part of Mantl) and from the facade (through the metrics library),
+- A facade, currently a [Traefik](https://traefik.github.io/) container;
+- The cattle store app in this repo, this is the thing that will be scaled up and down, currently a golang app;
+- The "herder," which will monitor the cattle store apps;
+- A front end application that gets its information from Marathon;
+- minimesos, using the `traefik` branch;
 - A hardware tick counter, that counts the revolutions of a wheel or the clicks on a wheel of fortune, and relays each click to the `/tick` REST endpoint on the server.
 
 ![](http://www.remmelt.com/media/cattlestorev1.jpg)
 
 ##Current state
+The [/infra subdir](https://github.com/ContainerSolutions/cattlestore-herder/tree/master/infra) in the herder repo has a number of scripts that aid in setting up the parts.
 
-Currently the app runs on Consul using Registrator (to be replaced), and the hardware, front end and herder are not yet implemented.
-
-Both provided apps should be buildable with their `build.sh` scripts, and will build in containers.
-
+Start by checking out the `traefik` branch of [minimesos](https://github.com/ContainerSolutions/minimesos) and building it.
 ```
-docker run -d --name=consul --net=host -p 8500:8500 -p 8600:8600 gliderlabs/consul-server -bootstrap
-docker run -d --name=registrator --net=host --volume=/var/run/docker.sock:/tmp/docker.sock gliderlabs/registrator:latest consul://localhost:8500
-docker run --rm -p 8080:8080 -p 8081:8081 --name facade facade
+git clone, etc
+git checkout, etc
+./gradlew build -x test
+bin/minimesos
+```
 
-#Run several of these:
-docker run -dP cattlestore
+Now get the `infra` scripts and start Traefik, the herder and a number of cattle store instances
+```
+docker-compose up -d
+./load.sh
 ```
 
 This should do it.
+
+## Troubleshooting
+OSX's Homebrew's go does not come with cross compilation support by default. (Re)install go using:
+```
+brew reinstall go --with-cc-common
+```
+This will enable cross compilation.
+
